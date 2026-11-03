@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#07070c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ArbMusic">
+  <title>ArbMusic</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="bgfx"></div>
+  <div class="noise"></div>
+
+  <!-- ============ HOME ============ -->
+  <section class="view active" id="view-home">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 14v-4M8 17V7M12 20V4M16 17V7M20 14v-4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="brand-txt">
+          <h1>ArbMusic</h1>
+          <span id="home-sub">твоя музыка</span>
+        </div>
+      </div>
+      <button class="iconbtn" id="btn-rescan" aria-label="Обновить">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M20 11a8 8 0 1 0-2.3 6.3M20 5v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </header>
+
+    <button class="card card-mix" id="card-mix">
+      <div class="card-ico">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7M16 21h5v-5M21 21l-7-7M8 3H3v5M3 3l7 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="card-txt">
+        <span class="card-title">Микс</span>
+        <span class="card-sub" id="mix-sub">случайный порядок · все треки</span>
+      </div>
+      <span class="card-glow"></span>
+    </button>
+
+    <button class="search-pill" id="btn-search">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Поиск треков и исполнителей</span>
+    </button>
+
+    <div class="section-head">
+      <h2>Все треки</h2>
+      <span class="count" id="all-count"></span>
+    </div>
+    <div class="tracks" id="tracklist"></div>
+
+    <div class="empty" id="empty-home">
+      <div class="empty-art">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M10 15.5v-5l4-1v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="15.5" r="1.4" fill="currentColor"/><circle cx="13" cy="14.5" r="1.4" fill="currentColor"/></svg>
+      </div>
+      <h3>Треков пока нет</h3>
+      <p id="empty-home-text">Треки появятся, когда админ опубликует их в общей базе</p>
+    </div>
+  </section>
+
+  <!-- ============ LIST (микс / моя музыка) ============ -->
+  <section class="view" id="view-list">
+    <header class="topbar">
+      <button class="iconbtn back" data-back aria-label="Назад">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <h2 id="list-title">Список</h2>
+      <button class="iconbtn" id="btn-list-shuffle" aria-label="Перемешать">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7M16 21h5v-5M21 21l-7-7M8 3H3v5M3 3l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </header>
+    <div class="tracks" id="list-tracks"></div>
+    <div class="empty" id="empty-list">
+      <div class="empty-art">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 20.7C7 16.5 3.5 13.3 3.5 9.7 3.5 7 5.6 5 8.2 5c1.5 0 3 .7 3.8 2 .8-1.3 2.3-2 3.8-2 2.6 0 4.7 2 4.7 4.7 0 3.6-3.5 6.8-8.5 11z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </div>
+      <h3>Здесь пока пусто</h3>
+      <p>Сохрани треки — жми сердечко у трека или в плеере</p>
+    </div>
+  </section>
+
+  <!-- ============ SEARCH ============ -->
+  <section class="view" id="view-search">
+    <header class="topbar">
+      <button class="iconbtn back" data-back aria-label="Назад">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="search-input" type="search" placeholder="Название или исполнитель…" autocomplete="off">
+      </div>
+    </header>
+    <div class="tracks" id="search-results"></div>
+    <div class="empty" id="empty-search">
+      <div class="empty-art">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8.5 11h5M8.5 8.5h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".5"/></svg>
+      </div>
+      <h3>Ничего не найдено</h3>
+      <p>Попробуй другое название или исполнителя</p>
+    </div>
+  </section>
+
+  <!-- ============ PROFILE ============ -->
+  <section class="view" id="view-profile">
+    <header class="topbar">
+      <h2>Профиль</h2>
+    </header>
+
+    <div id="profile-out" class="profile-box glass">
+      <div class="profile-avatar big">?</div>
+      <h3>Войди в аккаунт</h3>
+      <p>Загружай свои треки в общую базу и сохраняй избранное</p>
+      <button class="btn-grad" id="btn-open-auth">Войти или создать аккаунт</button>
+    </div>
+
+    <div id="profile-in" class="hidden">
+      <div class="profile-card glass">
+        <div class="profile-avatar" id="profile-avatar">A</div>
+        <div class="profile-meta">
+          <h3 id="profile-name">—</h3>
+          <span class="badge admin hidden" id="profile-admin-badge">Админ</span>
+          <span class="badge premium hidden" id="profile-premium-badge">Премиум</span>
+        </div>
+      </div>
+
+      <button class="profile-action premium" id="btn-buy-premium">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 9h18M3 9l2.4-4.2A1.5 1.5 0 0 1 6.7 4h10.6a1.5 1.5 0 0 1 1.3.8L21 9M3 9v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9M9 14a3 3 0 0 0 6 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Премиум — 80 ₽/мес
+      </button>
+      <button class="profile-action" id="btn-upload-track">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0l-4 4m4-4l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Загрузить трек на модерацию
+      </button>
+      <button class="profile-action admin hidden" id="btn-admin">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Админ-панель
+      </button>
+      <button class="profile-action danger" id="btn-logout">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Выйти
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ============ HOTBAR ============ -->
+  <nav id="hotbar">
+    <span id="hb-pill"></span>
+    <button class="hb-btn active" data-nav="home">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 10.5L12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19v-8.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 20v-6h5v6" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span>Главная</span>
+    </button>
+    <button class="hb-btn" data-nav="search">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Поиск</span>
+    </button>
+    <button class="hb-btn" data-nav="favs">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 20.7C7 16.5 3.5 13.3 3.5 9.7 3.5 7 5.6 5 8.2 5c1.5 0 3 .7 3.8 2 .8-1.3 2.3-2 3.8-2 2.6 0 4.7 2 4.7 4.7 0 3.6-3.5 6.8-8.5 11z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span>Моя музыка</span>
+    </button>
+    <button class="hb-btn" data-nav="profile">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4.5 20c1.2-3.2 4-5 7.5-5s6.3 1.8 7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Профиль</span>
+    </button>
+  </nav>
+
+  <!-- ============ MINI PLAYER ============ -->
+  <div id="mini" class="hidden">
+    <div class="mini-prog"><i id="mini-fill"></i></div>
+    <div class="thumb mini-art" id="mini-art"></div>
+    <div class="mini-meta">
+      <div class="mini-title" id="mini-title">—</div>
+      <div class="mini-artist" id="mini-artist"></div>
+    </div>
+    <button class="rdel" id="mini-del" hidden aria-label="Удалить из базы">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2M6.5 7l1 12.2A1.5 1.5 0 0 0 9 20.6h6a1.5 1.5 0 0 0 1.5-1.4l1-12.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="iconbtn" id="mini-play" aria-label="Play"></button>
+    <button class="iconbtn" id="mini-next" aria-label="Next">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5.5v13c0 .8.9 1.3 1.6.9l9-6.1a1 1 0 0 0 0-1.7l-9-6A1 1 0 0 0 6 5.5z"/><rect x="17" y="5" width="2.4" height="14" rx="1.2"/></svg>
+    </button>
+  </div>
+
+  <!-- ============ FULL PLAYER ============ -->
+  <div id="player" class="sheet">
+    <div class="player-inner">
+      <header class="p-top">
+        <button class="iconbtn" id="btn-collapse" aria-label="Свернуть">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <span class="p-label">Сейчас играет</span>
+        <span class="p-spacer"></span>
+      </header>
+
+      <div class="p-stage">
+        <div class="p-art-wrap" id="p-art-wrap">
+          <div class="p-art-glow" id="p-art-glow"></div>
+          <div class="thumb p-art" id="p-art"></div>
+        </div>
+        <div class="p-lyrics hidden" id="p-lyrics">
+          <div class="lyrics-scroll" id="lyrics-scroll"></div>
+        </div>
+      </div>
+
+      <div class="p-meta">
+        <div class="p-meta-txt">
+          <h2 id="p-title">—</h2>
+          <h3 id="p-artist"></h3>
+        </div>
+        <button class="rdel" id="p-del" hidden aria-label="Удалить из базы">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2M6.5 7l1 12.2A1.5 1.5 0 0 0 9 20.6h6a1.5 1.5 0 0 0 1.5-1.4l1-12.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="iconbtn" id="btn-fav" aria-label="В избранное">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 20.7C7 16.5 3.5 13.3 3.5 9.7 3.5 7 5.6 5 8.2 5c1.5 0 3 .7 3.8 2 .8-1.3 2.3-2 3.8-2 2.6 0 4.7 2 4.7 4.7 0 3.6-3.5 6.8-8.5 11z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <div class="p-seek">
+        <div class="seekbar" id="seekbar">
+          <div class="seek-track"><i class="seek-fill" id="seek-fill"></i></div>
+          <div class="seek-thumb" id="seek-thumb"></div>
+        </div>
+        <div class="p-times"><span id="t-cur">0:00</span><span id="t-dur">0:00</span></div>
+      </div>
+
+      <div class="p-controls">
+        <button class="iconbtn ghost" id="btn-shuffle" aria-label="Перемешать">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7M16 21h5v-5M21 21l-7-7M8 3H3v5M3 3l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="iconbtn big" id="btn-prev" aria-label="Назад">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 5.5v13c0 .8-.9 1.3-1.6.9l-9-6.1a1 1 0 0 1 0-1.7l9-6A1 1 0 0 1 18 5.5z"/><rect x="4.6" y="5" width="2.4" height="14" rx="1.2"/></svg>
+        </button>
+        <button class="play-btn" id="btn-play" aria-label="Play"></button>
+        <button class="iconbtn big" id="btn-next" aria-label="Вперёд">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5.5v13c0 .8.9 1.3 1.6.9l9-6.1a1 1 0 0 0 0-1.7l-9-6A1 1 0 0 0 6 5.5z"/><rect x="17" y="5" width="2.4" height="14" rx="1.2"/></svg>
+        </button>
+        <button class="iconbtn ghost" id="btn-repeat" aria-label="Повтор">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M17 2l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 11v-1a4 4 0 0 1 4-4h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 22l-4-4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 13v1a4 4 0 0 1-4 4H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <b class="rep-one hidden">1</b>
+        </button>
+      </div>
+
+      <div class="p-extra">
+        <button class="chipbtn active" id="btn-lyrics">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 10h16M4 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 18h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>
+          Текст песни
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- ============ AUTH MODAL ============ -->
+  <div id="modal-auth" class="modal">
+    <div class="modal-card">
+      <button class="modal-x" data-close="modal-auth" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="tabs">
+        <button class="tab active" data-tab="login">Вход</button>
+        <button class="tab" data-tab="reg">Регистрация</button>
+      </div>
+      <input id="auth-name" class="field" placeholder="Имя пользователя" maxlength="20" autocomplete="username">
+      <input id="auth-pass" class="field" type="password" placeholder="Пароль" autocomplete="current-password">
+      <div class="form-err hidden" id="auth-err"></div>
+      <button class="btn-grad wide" id="auth-submit">Войти</button>
+    </div>
+  </div>
+
+  <!-- ============ UPLOAD MODAL ============ -->
+  <div id="modal-upload" class="modal">
+    <div class="modal-card">
+      <button class="modal-x" data-close="modal-upload" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <h3>Загрузка трека</h3>
+      <p class="modal-sub">Трек появится в общей базе после проверки админом</p>
+      <button class="file-pick" id="upload-audio-btn">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 18.5V6.8l9-2.3v11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.6" cy="18.5" r="2.4" fill="currentColor"/><circle cx="15.6" cy="15.5" r="2.4" fill="currentColor"/></svg>
+        <span id="upload-audio-name">Выбрать аудиофайл</span>
+      </button>
+      <button class="file-pick" id="upload-lrc-btn">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 10h16M4 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span id="upload-lrc-name">Текст песни .lrc (необязательно)</span>
+      </button>
+      <button class="file-pick" id="upload-cover-btn">
+        <span class="cover-preview" id="upload-cover-preview">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="3.5" width="17" height="17" rx="4" stroke="currentColor" stroke-width="1.7"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><path d="M4.5 17l4.5-4.5 3 3 3.5-3.5 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span id="upload-cover-name">Обложка трека (необязательно)</span>
+      </button>
+      <input id="upload-title" class="field" placeholder="Название трека" maxlength="60">
+      <input id="upload-artist" class="field" placeholder="Исполнитель" maxlength="40">
+      <div class="form-err hidden" id="upload-err"></div>
+      <button class="btn-grad wide" id="upload-submit">Отправить на модерацию</button>
+      <input type="file" id="upload-audio" accept=".mp3,.m4a,.aac,.wav,.flac,.ogg,.opus,.wma,audio/*" hidden>
+      <input type="file" id="upload-lrc" accept=".lrc,.txt" hidden>
+      <input type="file" id="upload-cover" accept=".jpg,.jpeg,.png,.webp,image/*" hidden>
+    </div>
+  </div>
+
+  <!-- ============ ADMIN MODAL ============ -->
+  <div id="modal-admin" class="modal">
+    <div class="modal-card wide-modal">
+      <button class="modal-x" data-close="modal-admin" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <h3>Админ-панель</h3>
+
+      <div id="admin-panel-box">
+        <div class="admin-head">
+          <span>Очередь модерации</span>
+          <button class="iconbtn small" id="admin-refresh" aria-label="Обновить">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M20 11a8 8 0 1 0-2.3 6.3M20 5v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div id="admin-queue" class="admin-queue"></div>
+        <div class="admin-empty hidden" id="admin-empty">Очередь пуста — все треки обработаны 👌</div>
+
+        <div class="admin-head" style="margin-top: 20px;"><span>Пользователи · Премиум 80 ₽/мес</span></div>
+        <div id="admin-users" class="admin-queue"></div>
+      </div>
+
+      <!-- премиум-таб для будущих расширений -->
+    </div>
+  </div>
+
+  <!-- ============ PREMIUM MODAL ============ -->
+  <div id="modal-premium" class="modal">
+    <div class="modal-card">
+      <button class="modal-x" data-close="modal-premium" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="prem-head">
+        <div class="prem-crown">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l2-9 5 5 2-7 2 7 5-5 2 9H3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>ArbMusic Премиум</h3>
+        <div class="prem-price">80 ₽ <span>/ месяц</span></div>
+      </div>
+      <ul class="prem-list">
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Фоновое воспроизведение — музыка играет, даже когда приложение свернуто или экран выключен</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Поддержка развития плеера</li>
+      </ul>
+      <div class="prem-how">
+        <b>Как купить:</b>
+        <ol>
+          <li>Переведи <b>80 ₽</b> админу переводом (СБП) — <b>arbuzikyt99</b></li>
+          <li>В сообщении укажи свой ник: <b id="prem-myname">—</b></li>
+          <li>Админ включит Премиум удалённо за пару минут</li>
+        </ol>
+      </div>
+      <button class="btn-grad wide" id="prem-ok">Понятно</button>
+    </div>
+  </div>
+
+
+  <script src="js/app.js"></script>
+</body>
+</html>
