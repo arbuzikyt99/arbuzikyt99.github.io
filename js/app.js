@@ -199,7 +199,6 @@ function mergeLibrary() {
 
 function refreshUI() {
   const n = state.tracks.length;
-  $('#mix-sub').textContent = n ? `случайный порядок · ${n} ${plural(n, 'трек', 'трека', 'треков')}` : 'случайный порядок · все треки';
   $('#all-count').textContent = n ? `${n} ${plural(n, 'трек', 'трека', 'треков')}` : '';
   $('#home-sub').textContent = n ? `${n} ${plural(n, 'трек', 'трека', 'треков')}` : 'общая база';
   renderHome();
@@ -412,6 +411,11 @@ function refreshProfile() {
     $('#profile-avatar').textContent = (s.name[0] || 'A').toUpperCase();
     $('#profile-admin-badge').classList.toggle('hidden', !s.admin);
     $('#btn-admin').classList.toggle('hidden', !s.admin);
+    // версия: веб — просто номер, apk/exe — кнопка обновлений
+    const p = platformType();
+    const vb = $('#btn-version'), vs = $('#ver-static'), vn = $('#ver-num');
+    if (p === 'web') { vb.classList.add('hidden'); vs.classList.remove('hidden'); vn.textContent = APP_VER; }
+    else { vb.classList.remove('hidden'); vs.classList.add('hidden'); }
     const pb = $('#profile-premium-badge');
     if (pb) {
       if (s.owner || s.admin) { pb.textContent = s.owner ? 'Владелец · ∞ Премиум' : 'Админ · Премиум'; pb.classList.remove('hidden'); }
@@ -460,10 +464,32 @@ function wireAuth() {
   $('#btn-buy-premium').addEventListener('click', () => {
     const s2 = session();
     if (!s2) { openModal('modal-auth'); return; }
-    $('#prem-myname').textContent = s2.name;
+    const nm = $('#prem-myname'); if (nm) nm.textContent = s2.name;
     openModal('modal-premium');
   });
-  $('#prem-ok').addEventListener('click', () => closeModal('modal-premium'));
+  $('#prem-ok').addEventListener('click', () => {
+    closeModal('modal-premium');
+    refreshSessionStatus();
+    setTimeout(refreshSessionStatus, 8000);
+    toast('Обновляю статус…');
+  });
+  $('#prem-pay').addEventListener('click', async () => {
+    const err = $('#prem-err');
+    err.classList.add('hidden');
+    const btn = $('#prem-pay');
+    btn.disabled = true; btn.textContent = 'Создаю счёт…';
+    try {
+      const d = await api('/api/premium/pay', { body: { email: $('#prem-email').value.trim() } });
+      // открываем страницу оплаты Lava
+      const w = window.open(d.url, '_blank');
+      if (!w) location.href = d.url;
+      toast('Страница оплаты открыта — после оплаты премиум включится сам');
+    } catch (e) {
+      err.textContent = e.message;
+      err.classList.remove('hidden');
+    }
+    btn.disabled = false; btn.textContent = 'Оплатить 80 ₽';
+  });
   $('#btn-logout').addEventListener('click', () => {
     setSession(null);
     refreshProfile();
@@ -580,6 +606,61 @@ async function loadAdminQueue() {
   }
 }
 
+/* ---------- версия и обновления ---------- */
+function wireVersion() {
+  $('#btn-version').addEventListener('click', async () => {
+    openModal('modal-version');
+    renderVersionInfo(null);
+    const b = await fetchBuild(true);
+    renderVersionInfo(b);
+    const res = $('#ver-result');
+    res.classList.remove('hidden');
+    res.style.color = '';
+    const msg = [];
+    if (b.ui > APP_VER) msg.push('Доступно обновление интерфейса (v' + b.ui + ') — жми «Обновить интерфейс»');
+    if (b.shell > SHELL_VER) msg.push('Доступна новая версия приложения (' + b.versionName + ') — скачай и установи');
+    res.textContent = msg.length ? msg.join('. ') : 'У тебя последняя версия ✓';
+    res.style.color = '#6ee7b7';
+    if (b.shell > SHELL_VER) showDownload(b);
+  });
+  $('#ver-download').addEventListener('click', () => {
+    const b = window.__latestBuild;
+    if (!b) return;
+    const p = platformType();
+    if (p === 'exe') window.open(b.exeUrl, '_blank');
+    else toast('Обновление Android — через RuStore');
+  });
+  $('#ver-refresh').addEventListener('click', async () => {
+    for (const reg of await navigator.serviceWorker.getRegistrations()) await reg.unregister();
+    for (const k of await caches.keys()) await caches.delete(k);
+    location.reload();
+  });
+}
+async function fetchBuild(bust) {
+  const r = await fetch('./version.json' + (bust ? '?cb=' + Date.now() : ''), { cache: 'no-cache' });
+  const b = await r.json();
+  window.__latestBuild = b;
+  return b;
+}
+function renderVersionInfo(b) {
+  const el = $('#ver-info');
+  if (!el) return;
+  const p = platformType();
+  const platName = { apk: 'Android (APK)', exe: 'Windows (EXE)', web: 'Веб-версия' }[p];
+  el.innerHTML =
+    '<div class="ver-row">Интерфейс: <b>v' + APP_VER + '</b></div>' +
+    '<div class="ver-row">Приложение: <b>' + (SHELL_VER ? 'v' + SHELL_VER : '—') + '</b> · ' + platName + '</div>' +
+    (b ? '<div class="ver-row">На сервере: <b>интерфейс v' + b.ui + ' · оболочка v' + b.shell + '</b></div>' +
+         '<div class="ver-row">' + esc(b.versionName) + '</div>' : '');
+  const dl = $('#ver-download');
+  if (b && b.shell > SHELL_VER && p === 'exe') dl.classList.remove('hidden');
+  else dl.classList.add('hidden');
+}
+function showDownload(b) {
+  const dl = $('#ver-download');
+  if (dl) dl.classList.remove('hidden');
+}
+
 function wireAdmin() {
   $('#mini-del').addEventListener('click', e => {
     e.stopPropagation();
@@ -670,12 +751,7 @@ function playList(list, startIdx, opts = {}) {
   state.baseQueue = [...list];
   if (opts.shuffle || state.shuffle) {
     state.queue = shuffleArr([...list]);
-    if (startIdx >= 0 && opts.keepFirst) {
-      const t = list[startIdx];
-      const k = state.queue.indexOf(t);
-      if (k > 0) [state.queue[0], state.queue[k]] = [state.queue[k], state.queue[0]];
-      state.qi = 0;
-    } else state.qi = startIdx >= 0 ? 0 : 0;
+    state.qi = 0; // случайно выбранный трек — первый в перемешанной очереди
     state.shuffle = true;
   } else {
     state.queue = [...list];
@@ -1020,7 +1096,7 @@ function wire() {
   $('#card-mix').addEventListener('click', () => {
     if (!state.tracks.length) { toast('Сначала найди музыку'); return; }
     state.shuffle = true;
-    playList(state.tracks, 0, { shuffle: true, keepFirst: true });
+    playList(state.tracks, -1, { shuffle: true });
     openPlayer();
   });
   $('#btn-search').addEventListener('click', () => {
@@ -1038,13 +1114,14 @@ function wire() {
   wireAuth();
   wireUpload();
   wireAdmin();
+  wireVersion();
 
   // list view
   $('#btn-list-shuffle').addEventListener('click', () => {
     const list = getListForView();
     if (!list.length) { toast('Пусто'); return; }
     state.shuffle = true;
-    playList(list, 0, { shuffle: true, keepFirst: true });
+    playList(list, -1, { shuffle: true });
     openPlayer();
   });
   $$('[data-back]').forEach(b => b.addEventListener('click', () => showView('home')));
@@ -1140,7 +1217,17 @@ function wire() {
 }
 
 /* ---------- авто-обновление веб-версии ---------- */
-const APP_VER = 9;
+const APP_VER = 13;
+/* номер оболочки (нативного приложения): ?shell=N в адресе, 0 — чистый веб */
+const SHELL_VER = parseInt(new URLSearchParams(location.search).get('shell')) || 0;
+function platformType() {
+  if (window.Capacitor && window.Capacitor.getPlatform) {
+    const p = window.Capacitor.getPlatform();
+    if (p === 'android') return 'apk';
+  }
+  if (navigator.userAgent.includes('Electron')) return 'exe';
+  return 'web';
+}
 async function checkVersion() {
   if (isNative || !/^https?:$/.test(location.protocol)) return;
   try {

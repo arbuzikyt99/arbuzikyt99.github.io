@@ -718,3 +718,14 @@ a[href*="zcode"], a[href*="z.ai"], [class*="zcode"], [id*="zcode"], [class*="bad
 }
 .user-item .ubtn:active { transform: scale(.92); }
 .user-item .ubtn.off { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.15); color: var(--sub); }
+
+/* версия и обновления */
+.ver-info {
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px; padding: 13px 15px; margin-bottom: 12px;
+  font-size: 13.5px; color: var(--sub); line-height: 1.75;
+}
+.ver-info b { color: var(--txt); }
+#ver-download { margin-top: 4px; }
+
+.ver-static b { color: var(--txt); }
