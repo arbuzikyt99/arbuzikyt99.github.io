@@ -731,6 +731,7 @@ a[href*="zcode"], a[href*="z.ai"], [class*="zcode"], [id*="zcode"], [class*="bad
 .ver-static b { color: var(--txt); }
 
 /* крестик скрытия мини-плеера — виден всем */
+#mini.closed { opacity: 0; visibility: hidden; transform: translateY(130%); pointer-events: none; }
 #mini-close { width: 34px; height: 34px; display: grid; place-items: center; color: var(--sub); border-radius: 50%; flex-shrink: 0; transition: transform .15s ease; }
 #mini-close svg { width: 17px; height: 17px; }
 #mini-close:hover { color: var(--txt); }

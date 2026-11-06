@@ -845,6 +845,7 @@ function onTrackChanged(t) {
   // mini
   const mini = $('#mini');
   mini.classList.remove('hidden');
+  mini.classList.remove('closed');
   mini.classList.add('up');
   $('#mini-title').textContent = t.title;
   $('#mini-artist').textContent = t.artist;
@@ -1216,7 +1217,8 @@ function wire() {
     e.stopPropagation();
     audio.pause();
     updatePlayUI();
-    $('#mini').classList.remove('up'); // спрятать панель
+    $('#mini').classList.remove('up');
+    $('#mini').classList.add('closed'); // закрыть полностью
   });
   $('#mini-play').addEventListener('click', togglePlay);
   $('#mini-next').addEventListener('click', () => next());
@@ -1269,7 +1271,7 @@ function wire() {
 }
 
 /* ---------- авто-обновление веб-версии ---------- */
-const APP_VER = 15;
+const APP_VER = 17;
 /* версия оболочки: EXE сообщает свою, APK возьмёт из устройства, веб — 0 */
 let SHELL_VERSION_NAME = '0';
 /* номер оболочки (нативного приложения): ?shell=N в адресе, 0 — чистый веб */
