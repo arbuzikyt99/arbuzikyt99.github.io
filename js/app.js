@@ -61,7 +61,9 @@ function toast(msg) {
 
 /* deterministic pretty gradient per track */
 function gradFor(track) {
-  const h = hash(track.id) % 360;
+  const h0 = hash(track.id) % 360;
+  // зелёные оттенки (70–175) сдвигаем в фиолетово-розовый диапазон
+  const h = (h0 >= 65 && h0 <= 180) ? 195 + (h0 - 65) % 140 : h0;
   const h2 = (h + 45) % 360;
   return `linear-gradient(135deg, hsl(${h} 65% 42%), hsl(${h2} 70% 30%))`;
 }
@@ -621,6 +623,14 @@ function wireVersion() {
       // оболочка EXE: проверка и установка через встроенный апдейтер
       res.textContent = 'Проверяю…';
       arbShell.checkForUpdates();
+      clearTimeout(window.__verT);
+      window.__verT = setTimeout(() => {
+        const res = $('#ver-result');
+        if (res && res.textContent === 'Проверяю…') {
+          res.style.color = '#6ee7b7';
+          res.textContent = 'У тебя последняя версия ✓';
+        }
+      }, 15000);
     } else if (platformType() === 'apk') {
       await fetchBuild(true);
       renderVersionInfo(await fetchBuild(true));
@@ -661,6 +671,9 @@ function wireVersion() {
         res.textContent = 'Обновление ' + d.version + ' скачано — жми «Перезапустить и установить»';
         $('#ver-install').classList.remove('hidden');
         $('#ver-download').classList.add('hidden');
+      } else if (d.event === 'update-not-available') {
+        res.style.color = '#6ee7b7';
+        res.textContent = 'У тебя последняя версия ✓';
       } else if (d.event === 'error') {
         res.style.color = '#fca5a5';
         res.textContent = 'Обновление: ' + d.message;
