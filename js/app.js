@@ -611,30 +611,62 @@ function wireVersion() {
   $('#btn-version').addEventListener('click', async () => {
     openModal('modal-version');
     renderVersionInfo(null);
-    const b = await fetchBuild(true);
-    renderVersionInfo(b);
     const res = $('#ver-result');
     res.classList.remove('hidden');
     res.style.color = '';
-    const msg = [];
-    if (b.ui > APP_VER) msg.push('Доступно обновление интерфейса (v' + b.ui + ') — жми «Обновить интерфейс»');
-    if (b.shell > SHELL_VER) msg.push('Доступна новая версия приложения (' + b.versionName + ') — скачай и установи');
-    res.textContent = msg.length ? msg.join('. ') : 'У тебя последняя версия ✓';
-    res.style.color = '#6ee7b7';
-    if (b.shell > SHELL_VER) showDownload(b);
+    $('#ver-install').classList.add('hidden');
+    $('#ver-download').classList.add('hidden');
+    $('#ver-download').textContent = 'Скачать обновление';
+    if (window.arbShell) {
+      // оболочка EXE: проверка и установка через встроенный апдейтер
+      res.textContent = 'Проверяю…';
+      arbShell.checkForUpdates();
+    } else if (platformType() === 'apk') {
+      await fetchBuild(true);
+      renderVersionInfo(await fetchBuild(true));
+      res.textContent = 'Обновления приложения — через RuStore';
+      res.style.color = '#6ee7b7';
+    } else {
+      const b = await fetchBuild(true);
+      renderVersionInfo(b);
+      const msg = [];
+      if (b.ui > APP_VER) msg.push('Доступно обновление интерфейса (v' + b.ui + ') — жми «Обновить интерфейс»');
+      res.textContent = msg.length ? msg.join('. ') : 'У тебя последняя версия ✓';
+      res.style.color = '#6ee7b7';
+      if (b.exeUrl) showDownload(b);
+    }
   });
   $('#ver-download').addEventListener('click', () => {
+    if (window.arbShell) { arbShell.downloadUpdate(); return; }
     const b = window.__latestBuild;
-    if (!b) return;
-    const p = platformType();
-    if (p === 'exe') window.open(b.exeUrl, '_blank');
-    else toast('Обновление Android — через RuStore');
+    if (b && b.exeUrl) window.open(b.exeUrl, '_blank');
   });
-  $('#ver-refresh').addEventListener('click', async () => {
-    for (const reg of await navigator.serviceWorker.getRegistrations()) await reg.unregister();
-    for (const k of await caches.keys()) await caches.delete(k);
-    location.reload();
+  $('#ver-install').addEventListener('click', () => {
+    if (window.arbShell) arbShell.installUpdate();
   });
+  if (window.arbShell) {
+    arbShell.onUpdaterEvent(d => {
+      const res = $('#ver-result');
+      if (!res) return;
+      res.classList.remove('hidden');
+      if (d.event === 'update-available') {
+        res.style.color = '#fde68a';
+        res.textContent = 'Доступна версия оболочки ' + d.version + ' — скачиваю…';
+        arbShell.downloadUpdate();
+      } else if (d.event === 'download-progress') {
+        res.style.color = '#fde68a';
+        res.textContent = 'Скачиваю обновление: ' + d.percent + '%';
+      } else if (d.event === 'update-downloaded') {
+        res.style.color = '#6ee7b7';
+        res.textContent = 'Обновление ' + d.version + ' скачано — жми «Перезапустить и установить»';
+        $('#ver-install').classList.remove('hidden');
+        $('#ver-download').classList.add('hidden');
+      } else if (d.event === 'error') {
+        res.style.color = '#fca5a5';
+        res.textContent = 'Обновление: ' + d.message;
+      }
+    });
+  }
 }
 async function fetchBuild(bust) {
   const r = await fetch('./version.json' + (bust ? '?cb=' + Date.now() : ''), { cache: 'no-cache' });
@@ -647,13 +679,14 @@ function renderVersionInfo(b) {
   if (!el) return;
   const p = platformType();
   const platName = { apk: 'Android (APK)', exe: 'Windows (EXE)', web: 'Веб-версия' }[p];
+  const shellName = window.arbShell ? ('v' + SHELL_VERSION_NAME) : '—';
   el.innerHTML =
     '<div class="ver-row">Интерфейс: <b>v' + APP_VER + '</b></div>' +
-    '<div class="ver-row">Приложение: <b>' + (SHELL_VER ? 'v' + SHELL_VER : '—') + '</b> · ' + platName + '</div>' +
-    (b ? '<div class="ver-row">На сервере: <b>интерфейс v' + b.ui + ' · оболочка v' + b.shell + '</b></div>' +
+    '<div class="ver-row">Приложение: <b>' + shellName + '</b> · ' + platName + '</div>' +
+    (b ? '<div class="ver-row">На сервере: <b>интерфейс v' + b.ui + ' · оболочка ' + b.shellVersionName + '</b></div>' +
          '<div class="ver-row">' + esc(b.versionName) + '</div>' : '');
   const dl = $('#ver-download');
-  if (b && b.shell > SHELL_VER && p === 'exe') dl.classList.remove('hidden');
+  if (!window.arbShell && p === 'web' && b && b.exeUrl) dl.classList.remove('hidden');
   else dl.classList.add('hidden');
 }
 function showDownload(b) {
@@ -1166,6 +1199,12 @@ function wire() {
     if (e.target.closest('.iconbtn') || e.target.closest('.rdel')) return;
     openPlayer();
   });
+  $('#mini-close').addEventListener('click', e => {
+    e.stopPropagation();
+    audio.pause();
+    updatePlayUI();
+    $('#mini').classList.remove('up'); // спрятать панель
+  });
   $('#mini-play').addEventListener('click', togglePlay);
   $('#mini-next').addEventListener('click', () => next());
 
@@ -1217,7 +1256,9 @@ function wire() {
 }
 
 /* ---------- авто-обновление веб-версии ---------- */
-const APP_VER = 13;
+const APP_VER = 15;
+/* версия оболочки: EXE сообщает свою, APK возьмёт из устройства, веб — 0 */
+let SHELL_VERSION_NAME = '0';
 /* номер оболочки (нативного приложения): ?shell=N в адресе, 0 — чистый веб */
 const SHELL_VER = parseInt(new URLSearchParams(location.search).get('shell')) || 0;
 function platformType() {
@@ -1258,6 +1299,12 @@ async function init() {
   // общий каталог — единственный источник треков, на всех платформах
   loadCatalog();
   checkVersion();
+  // версия APK из устройства (для раздела «Версия»)
+  if (isNative && window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Device) {
+    window.Capacitor.Plugins.Device.getInfo().then(i => {
+      if (i.appVersion) { SHELL_VERSION_NAME = i.appVersion; }
+    }).catch(() => {});
+  }
   // фоновое прослушивание — только с премиумом
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && !isPremium()) window.__onBackground();

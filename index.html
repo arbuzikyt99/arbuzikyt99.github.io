@@ -42,7 +42,6 @@
       </div>
       <div class="card-txt">
         <span class="card-title">Микс</span>
-        <span class="card-sub" id="mix-sub">случайный порядок · все треки</span>
       </div>
       <span class="card-glow"></span>
     </button>
@@ -188,6 +187,9 @@
     </div>
     <button class="rdel" id="mini-del" hidden aria-label="Удалить из базы">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2M6.5 7l1 12.2A1.5 1.5 0 0 0 9 20.6h6a1.5 1.5 0 0 0 1.5-1.4l1-12.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="mini-x" id="mini-close" title="Скрыть панель" aria-label="Скрыть панель">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
     <button class="iconbtn" id="mini-play" aria-label="Play"></button>
     <button class="iconbtn" id="mini-next" aria-label="Next">
@@ -377,6 +379,7 @@
       <button class="btn-grad wide" id="ver-check">Проверить обновления</button>
       <div class="form-err hidden" id="ver-result"></div>
       <button class="btn-grad wide hidden" id="ver-download">Скачать обновление приложения</button>
+      <button class="btn-grad wide hidden" id="ver-install">Перезапустить и установить обновление</button>
       <button class="btn-ghost" id="ver-refresh">Обновить интерфейс (кэш)</button>
     </div>
   </div>
