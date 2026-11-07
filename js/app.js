@@ -505,7 +505,7 @@ function wireAuth() {
 /* ---------- загрузка трека на модерацию ---------- */
 let upAudio = null, upLrc = null, upCover = null;
 function wireUpload() {
-  $('#btn-upload-track').addEventListener('click', () => {
+  $('#btn-studio-upload').addEventListener('click', () => {
     if (!session()) { openModal('modal-auth'); return; }
     upAudio = upLrc = upCover = null;
     $('#upload-audio-name').textContent = 'Выбрать аудиофайл';
@@ -617,8 +617,8 @@ function wireStudio() {
     showView('studio');
     loadStudio();
   });
-  $('#btn-studio-upload2') && $('#btn-studio-upload2').addEventListener('click', () => $('#btn-upload-track').click());
-  $('#btn-studio-upload').addEventListener('click', () => $('#btn-upload-track').click());
+  $('#btn-studio-upload2') && $('#btn-studio-upload2').addEventListener('click', () => openModal('modal-upload'));
+  $('#btn-studio-upload').addEventListener('click', () => openModal('modal-upload'));
   $('#studio-refresh').addEventListener('click', () => loadStudio());
 }
 async function loadStudio() {
