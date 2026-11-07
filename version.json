@@ -1,1 +1,9 @@
-{ "v": 17 }
+{
+  "ui": 18,
+  "shell": 5,
+  "shellVersionName": "1.2.1",
+  "versionName": "ArbMusic 1.2.1",
+  "exeUrl": "https://github.com/arbuzikyt99/ArbMusicPlayer/releases/latest/download/ArbMusic-Setup.exe",
+  "apkUrl": "https://github.com/arbuzikyt99/ArbMusicPlayer/releases/latest/download/ArbMusic.apk",
+  "whatsNew": "Обновление из приложения без переустановки, исправлен Микс, платёж ЮKassa"
+}

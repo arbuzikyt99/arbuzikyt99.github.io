@@ -135,9 +135,9 @@
         <svg viewBox="0 0 24 24" fill="none"><path d="M3 9h18M3 9l2.4-4.2A1.5 1.5 0 0 1 6.7 4h10.6a1.5 1.5 0 0 1 1.3.8L21 9M3 9v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9M9 14a3 3 0 0 0 6 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Премиум — 80 ₽/мес
       </button>
-      <button class="profile-action" id="btn-upload-track">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0l-4 4m4-4l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        Загрузить трек на модерацию
+      <button class="profile-action studio" id="btn-studio">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l9 5-9 5-9-5 9-5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M5 10.5v5.5c0 1.5 3 3 7 3s7-1.5 7-3v-5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        ArbStudio
       </button>
       <button class="profile-action admin hidden" id="btn-admin">
         <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -152,6 +152,38 @@
         <svg viewBox="0 0 24 24" fill="none"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Выйти
       </button>
+    </div>
+  </section>
+
+  <!-- ============ ARBSTUDIO ============ -->
+  <section class="view" id="view-studio">
+    <header class="topbar">
+      <h2>ArbStudio</h2>
+      <button class="iconbtn" id="studio-refresh" aria-label="Обновить">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M20 11a8 8 0 1 0-2.3 6.3M20 5v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </header>
+
+    <div class="studio-stats">
+      <div class="stat-card plays"><b id="st-plays">0</b><span>прослушиваний</span></div>
+      <div class="stat-card"><b id="st-pub">0</b><span>опубликовано</span></div>
+      <div class="stat-card"><b id="st-pend">0</b><span>на модерации</span></div>
+    </div>
+
+    <button class="profile-action premium" id="btn-studio-upload">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0l-4 4m4-4l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Загрузить новый трек
+    </button>
+
+    <div class="section-head"><h2>Мои треки</h2></div>
+    <div id="studio-tracks" class="tracks"></div>
+    <div class="empty hidden" id="empty-studio">
+      <div class="empty-art">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l9 5-9 5-9-5 9-5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </div>
+      <h3>Пока пусто</h3>
+      <p>Загрузи свой первый трек — после модерации он появится в общей базе</p>
+      <button class="btn-grad" id="btn-studio-upload2">Загрузить трек</button>
     </div>
   </section>
 

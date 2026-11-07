@@ -742,3 +742,32 @@ a[href*="zcode"], a[href*="z.ai"], [class*="zcode"], [id*="zcode"], [class*="bad
 #mini-close svg { width: 17px; height: 17px; }
 #mini-close:hover { color: var(--txt); }
 #mini-close:active { transform: scale(.88); }
+
+/* ============================================================
+   ARBSTUDIO
+   ============================================================ */
+.studio-stats { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-card {
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 18px; padding: 14px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.stat-card b { font-size: 22px; font-weight: 800; }
+.stat-card.plays b { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stat-card span { font-size: 11.5px; color: var(--sub); }
+.profile-action.studio svg { color: #67e8f9; }
+.studio-track {
+  display: flex; align-items: center; gap: 12px; padding: 9px 10px;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+  border-radius: 15px; margin-bottom: 8px;
+}
+.studio-track .thumb { width: 44px; height: 44px; }
+.studio-track .smeta { flex: 1; min-width: 0; }
+.studio-track .smeta b { display: block; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.studio-track .smeta span { display: block; font-size: 12px; color: var(--sub); }
+.studio-track .splays {
+  font-size: 12.5px; font-weight: 700; color: var(--sub);
+  display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+}
+.studio-track .splays svg { width: 15px; height: 15px; }
+.badge.pending { background: rgba(251, 191, 36, .15); border-color: rgba(251, 191, 36, .35); color: #fcd34d; }
