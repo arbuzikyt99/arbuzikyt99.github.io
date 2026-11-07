@@ -414,6 +414,14 @@ function refreshProfile() {
     $('#profile-avatar').textContent = (s.name[0] || 'A').toUpperCase();
     $('#profile-admin-badge').classList.toggle('hidden', !s.admin);
     $('#btn-admin').classList.toggle('hidden', !s.admin);
+    // зелёная точка, если обновление скачано и ждёт установки
+    const vbtn = $('#btn-version');
+    if (vbtn && !vbtn.querySelector('.upd-dot')) {
+      const dot = document.createElement('i');
+      dot.className = 'upd-dot';
+      vbtn.appendChild(dot);
+      dot.style.display = window.__updateReady ? 'block' : 'none';
+    }
     // версия: веб — просто номер, apk/exe — кнопка обновлений
     const p = platformType();
     const vb = $('#btn-version'), vs = $('#ver-static'), vn = $('#ver-num');
@@ -666,6 +674,7 @@ function wireVersion() {
     $('#ver-install').classList.add('hidden');
     $('#ver-download').classList.add('hidden');
     $('#ver-download').textContent = 'Скачать обновление';
+    hideVerProgress();
     try {
       if (window.arbShell) {
         // оболочка EXE: проверка через встроенный апдейтер
@@ -718,11 +727,29 @@ function wireVersion() {
         res.textContent = 'Обновление ' + d.version + ' скачано — жми «Перезапустить и установить»';
         $('#ver-install').classList.remove('hidden');
         $('#ver-download').classList.add('hidden');
+      }
+        window.__updateReady = true;
+        const vb = $('#btn-version .upd-dot');
+        if (vb) vb.style.display = 'block'; else if (d.event === 'update-not-available') {
+        res.style.color = '#6ee7b7';
+        res.textContent = 'У тебя последняя версия ✓';
       } else if (d.event === 'update-not-available') {
         res.style.color = '#6ee7b7';
         res.textContent = 'У тебя последняя версия ✓';
+        hideVerProgress();
+      } else if (d.event === 'download-progress') {
+        res.style.color = '#fde68a';
+        res.textContent = 'Скачиваю: ' + d.percent + '% · ' + d.transferredMB.toFixed(1) + ' из ' + d.totalMB.toFixed(1) + ' МБ · ' + d.speedMBps.toFixed(1) + ' МБ/с · осталось ' + (d.totalMB - d.transferredMB).toFixed(1) + ' МБ';
+        showVerProgress(d.percent);
+      } else if (d.event === 'update-downloaded') {
+        res.style.color = '#6ee7b7';
+        res.textContent = 'Обновление ' + d.version + ' скачано — жми «Перезапустить и установить»';
+        hideVerProgress();
+        $('#ver-install').classList.remove('hidden');
+        $('#ver-download').classList.add('hidden');
       } else if (d.event === 'error') {
         res.style.color = '#fca5a5';
+        hideVerProgress();
         res.textContent = 'Обновление: ' + d.message;
       }
     });
@@ -733,6 +760,17 @@ function compareVersions(a, b) {
   const pb = String(b || '0').split('.').map(Number);
   for (let i = 0; i < 3; i++) { const d = (pa[i] || 0) - (pb[i] || 0); if (d) return d; }
   return 0;
+}
+function showVerProgress(p) {
+  const bar = $('#ver-progress');
+  if (!bar) return;
+  bar.classList.remove('hidden');
+  const fill = $('#ver-progress-fill');
+  if (fill) fill.style.width = p + '%';
+}
+function hideVerProgress() {
+  const bar = $('#ver-progress');
+  if (bar) bar.classList.add('hidden');
 }
 async function fetchBuild(bust) {
   const r = await fetch('./version.json' + (bust ? '?cb=' + Date.now() : ''), { cache: 'no-cache' });
@@ -1334,7 +1372,7 @@ function wire() {
 }
 
 /* ---------- авто-обновление веб-версии ---------- */
-const APP_VER = 18;
+const APP_VER = 20;
 /* версия оболочки: EXE сообщает свою, APK возьмёт из устройства, веб — 0 */
 let SHELL_VERSION_NAME = '0';
 /* номер оболочки (нативного приложения): ?shell=N в адресе, 0 — чистый веб */
