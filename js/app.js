@@ -617,6 +617,81 @@ async function loadAdminQueue() {
   }
 }
 
+/* ---------- Эквалайзер (Web Audio) ---------- */
+const EQ_BANDS = [
+  { f: 60, type: 'lowshelf', label: 'Бас' },
+  { f: 230, type: 'peaking', label: 'Низкие' },
+  { f: 910, type: 'peaking', label: 'Средние' },
+  { f: 3600, type: 'peaking', label: 'Высокие' },
+  { f: 14000, type: 'highshelf', label: 'Верхние' },
+];
+let eqCtx = null, eqSource = null, eqFilters = null;
+let eqState = JSON.parse(localStorage.getItem('arbmusic.eq') || '{"preset":"normal","gains":[0,0,0,0,0]}');
+if (!eqState.gains || eqState.gains.length !== 5) eqState = { preset: 'normal', gains: [0, 0, 0, 0, 0] };
+
+function ensureEqChain() {
+  if (eqCtx) return true;
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    eqCtx = new AC();
+    eqSource = eqCtx.createMediaElementSource(audio);
+    eqFilters = EQ_BANDS.map(b => {
+      const f = eqCtx.createBiquadFilter();
+      f.type = b.type;
+      f.frequency.value = b.f;
+      f.Q.value = 1;
+      return f;
+    });
+    let node = eqSource;
+    eqFilters.forEach(f => { node.connect(f); node = f; });
+    node.connect(eqCtx.destination);
+    audio.addEventListener('play', () => {
+      if (eqCtx && eqCtx.state === 'suspended') eqCtx.resume().catch(() => {});
+    });
+    applyEqGains();
+    return true;
+  } catch (_) { eqCtx = null; return false; }
+}
+function applyEqGains() {
+  if (!eqFilters) return;
+  eqFilters.forEach((f, i) => f.gain.value = eqState.gains[i] || 0);
+  if (eqCtx && eqCtx.state === 'suspended') eqCtx.resume().catch(() => {});
+}
+function setEqPreset(preset) {
+  eqState.preset = preset;
+  if (preset === 'bass') eqState.gains = [8, 5, 0, -1, 0];
+  if (preset === 'normal') eqState.gains = [0, 0, 0, 0, 0];
+  localStorage.setItem('arbmusic.eq', JSON.stringify(eqState));
+  if (preset === 'normal') {
+    if (eqFilters) eqFilters.forEach(f => f.gain.value = 0);
+    renderEq();
+    return;
+  }
+  if (ensureEqChain()) applyEq();
+  renderEq();
+}
+function setCustomGain(i, v) {
+  eqState.preset = 'custom';
+  eqState.gains[i] = v;
+  localStorage.setItem('arbmusic.eq', JSON.stringify(eqState));
+  if (ensureEqChain()) applyEq();
+  renderEq();
+}
+function renderEq() {
+  $('.eq-chip').forEach(ch => ch.classList.toggle('active', ch.dataset.eq === eqState.preset));
+  $('#eq-bands input').forEach((inp, i) => {
+    inp.value = eqState.gains[i];
+    const val = inp.closest('.eq-band').querySelector('.eq-val');
+    if (val) val.textContent = (eqState.gains[i] > 0 ? '+' : '') + eqState.gains[i] + ' дБ';
+  });
+}
+function wireEq() {
+  $('.eq-chip').forEach(ch => ch.addEventListener('click', () => setEqPreset(ch.dataset.eq)));
+  $('#eq-bands input').forEach(inp => inp.addEventListener('input', () => setCustomGain(+inp.dataset.band, +inp.value)));
+  $('#eq-reset').addEventListener('click', () => setEqPreset('normal'));
+  $('#btn-eq').addEventListener('click', () => { openModal('modal-eq'); renderEq(); });
+}
+
 /* ---------- версия и обновления ---------- */
 /* ---------- ArbStudio ---------- */
 function wireStudio() {
@@ -1263,6 +1338,8 @@ function wire() {
   wireAdmin();
   wireVersion();
   wireStudio();
+  wireEq();
+  if (eqState.preset !== 'normal') ensureEqChain();
 
   // list view
   $('#btn-list-shuffle').addEventListener('click', () => {
@@ -1372,7 +1449,7 @@ function wire() {
 }
 
 /* ---------- авто-обновление веб-версии ---------- */
-const APP_VER = 22;
+const APP_VER = 23;
 /* версия оболочки: EXE сообщает свою, APK возьмёт из устройства, веб — 0 */
 let SHELL_VERSION_NAME = '0';
 /* номер оболочки (нативного приложения): ?shell=N в адресе, 0 — чистый веб */
@@ -1403,6 +1480,7 @@ async function checkVersion() {
 
 /* ---------- init ---------- */
 async function init() {
+  audio.crossOrigin = 'anonymous'; // нужно для эквалайзера на https-треках
   if (!isNative) document.body.classList.add('web');
   wire();
   updateShuffleUI();

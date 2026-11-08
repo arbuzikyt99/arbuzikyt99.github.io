@@ -289,6 +289,10 @@
       </div>
 
       <div class="p-extra">
+        <button class="chipbtn" id="btn-eq">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 4v16M12 4v16M18 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="6" cy="9" r="2.4" fill="#07070c" stroke="none"/><circle cx="12" cy="15" r="2.4" fill="#07070c" stroke="none"/><circle cx="18" cy="8" r="2.4" fill="#07070c" stroke="none"/></svg>
+          Эквалайзер
+        </button>
         <button class="chipbtn active" id="btn-lyrics">
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 10h16M4 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 18h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>
           Текст песни
@@ -414,6 +418,29 @@
       <button class="btn-grad wide hidden" id="ver-download">Скачать обновление приложения</button>
       <button class="btn-grad wide hidden" id="ver-install">Перезапустить и установить обновление</button>
       <button class="btn-ghost" id="ver-refresh">Обновить интерфейс (кэш)</button>
+    </div>
+  </div>
+
+  <!-- ============ ЭКВАЛАЙЗЕР ============ -->
+  <div id="modal-eq" class="modal">
+    <div class="modal-card">
+      <button class="modal-x" data-close="modal-eq" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <h3>Эквалайзер</h3>
+      <div class="eq-chips">
+        <button class="eq-chip" data-eq="normal">Обычная</button>
+        <button class="eq-chip" data-eq="bass">Бас</button>
+        <button class="eq-chip" data-eq="custom">Свое</button>
+      </div>
+      <div id="eq-bands">
+        <div class="eq-band"><span class="eq-label">Бас · 60 Гц</span><input type="range" min="-12" max="12" step="1" data-band="0"><span class="eq-val">0 дБ</span></div>
+        <div class="eq-band"><span class="eq-label">Низкие · 230 Гц</span><input type="range" min="-12" max="12" step="1" data-band="1"><span class="eq-val">0 дБ</span></div>
+        <div class="eq-band"><span class="eq-label">Средние · 910 Гц</span><input type="range" min="-12" max="12" step="1" data-band="2"><span class="eq-val">0 дБ</span></div>
+        <div class="eq-band"><span class="eq-label">Высокие · 3.6 кГц</span><input type="range" min="-12" max="12" step="1" data-band="3"><span class="eq-val">0 дБ</span></div>
+        <div class="eq-band"><span class="eq-label">Верхние · 14 кГц</span><input type="range" min="-12" max="12" step="1" data-band="4"><span class="eq-val">0 дБ</span></div>
+      </div>
+      <button class="btn-ghost" id="eq-reset">Сбросить</button>
     </div>
   </div>
 

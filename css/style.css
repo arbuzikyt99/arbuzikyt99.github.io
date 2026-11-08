@@ -789,3 +789,24 @@ a[href*="zcode"], a[href*="z.ai"], [class*="zcode"], [id*="zcode"], [class*="bad
   background: var(--grad); border-radius: 6px;
   transition: width .3s ease;
 }
+
+/* ============================================================
+   ЭКВАЛАЙЗЕР
+   ============================================================ */
+.eq-chips { display: flex; gap: 8px; margin-bottom: 16px; }
+.eq-chip {
+  flex: 1; padding: 10px 0; border-radius: 12px; font-size: 13.5px; font-weight: 700;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: var(--sub);
+  transition: all .2s ease;
+}
+.eq-chip.active { background: var(--grad); border-color: rgba(255,255,255,.25); color: #fff; box-shadow: 0 4px 18px rgba(139,92,246,.35); }
+.eq-band {
+  display: flex; align-items: center; gap: 12px; padding: 9px 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.eq-band:last-of-type { border-bottom: none; }
+.eq-label { width: 130px; font-size: 13px; color: var(--sub); flex-shrink: 0; }
+.eq-band input[type=range] {
+  flex: 1; height: 5px; accent-color: #a78bfa; cursor: pointer;
+}
+.eq-val { width: 56px; text-align: right; font-size: 12.5px; font-weight: 700; color: var(--txt); flex-shrink: 0; }
