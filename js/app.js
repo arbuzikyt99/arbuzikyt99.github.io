@@ -667,14 +667,14 @@ function setEqPreset(preset) {
     renderEq();
     return;
   }
-  if (ensureEqChain()) applyEq();
+  if (ensureEqChain()) applyEqGains();
   renderEq();
 }
 function setCustomGain(i, v) {
   eqState.preset = 'custom';
   eqState.gains[i] = v;
   localStorage.setItem('arbmusic.eq', JSON.stringify(eqState));
-  if (ensureEqChain()) applyEq();
+  if (ensureEqChain()) applyEqGains();
   renderEq();
 }
 function renderEq() {
@@ -754,6 +754,16 @@ function wireVersion() {
       if (window.arbShell) {
         // оболочка EXE: проверка через встроенный апдейтер
         res.textContent = 'Проверяю…';
+        clearTimeout(window.__verT);
+        window.__verT = setTimeout(() => {
+          const res = $('#ver-result');
+          if (res && res.textContent === 'Проверяю…') {
+            res.style.color = '#fde68a';
+            res.textContent = 'Проверка дольше обычного (сеть). Можно скачать вручную:';
+            const b = window.__latestBuild;
+            if (b && b.exeUrl) showDownload(b);
+          }
+        }, 15000);
         arbShell.checkForUpdates();
       } else if (platformType() === 'apk') {
         const b = await fetchBuild(true);
