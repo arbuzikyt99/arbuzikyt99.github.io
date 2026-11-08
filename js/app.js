@@ -678,16 +678,16 @@ function setCustomGain(i, v) {
   renderEq();
 }
 function renderEq() {
-  $('.eq-chip').forEach(ch => ch.classList.toggle('active', ch.dataset.eq === eqState.preset));
-  $('#eq-bands input').forEach((inp, i) => {
+  $$('.eq-chip').forEach(ch => ch.classList.toggle('active', ch.dataset.eq === eqState.preset));
+  $$('#eq-bands input').forEach((inp, i) => {
     inp.value = eqState.gains[i];
     const val = inp.closest('.eq-band').querySelector('.eq-val');
     if (val) val.textContent = (eqState.gains[i] > 0 ? '+' : '') + eqState.gains[i] + ' дБ';
   });
 }
 function wireEq() {
-  $('.eq-chip').forEach(ch => ch.addEventListener('click', () => setEqPreset(ch.dataset.eq)));
-  $('#eq-bands input').forEach(inp => inp.addEventListener('input', () => setCustomGain(+inp.dataset.band, +inp.value)));
+  $$('.eq-chip').forEach(ch => ch.addEventListener('click', () => setEqPreset(ch.dataset.eq)));
+  $$('#eq-bands input').forEach(inp => inp.addEventListener('input', () => setCustomGain(+inp.dataset.band, +inp.value)));
   $('#eq-reset').addEventListener('click', () => setEqPreset('normal'));
   $('#btn-eq').addEventListener('click', () => { openModal('modal-eq'); renderEq(); });
 }
