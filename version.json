@@ -1,9 +1,9 @@
 {
-  "ui": 24,
+  "ui": 25,
   "shell": 5,
-  "shellVersionName": "1.2.1",
-  "versionName": "ArbMusic 1.2.1",
+  "shellVersionName": "2.0.0",
+  "versionName": "ArbMusic 2.0.0",
   "exeUrl": "https://github.com/arbuzikyt99/ArbMusicPlayer/releases/latest/download/ArbMusic-Setup.exe",
   "apkUrl": "https://github.com/arbuzikyt99/ArbMusicPlayer/releases/latest/download/ArbMusic.apk",
-  "whatsNew": "Микс: рандом, обновление из приложения, эквалайзер, ArbStudio, премиум ЮKassa"
+  "whatsNew": "Строгая тёмная тема: монохромное стекло вместо ярких цветов"
 }

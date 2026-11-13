@@ -61,11 +61,8 @@ function toast(msg) {
 
 /* deterministic pretty gradient per track */
 function gradFor(track) {
-  const h0 = hash(track.id) % 360;
-  // зелёные оттенки (70–175) сдвигаем в фиолетово-розовый диапазон
-  const h = (h0 >= 65 && h0 <= 180) ? 195 + (h0 - 65) % 140 : h0;
-  const h2 = (h + 45) % 360;
-  return `linear-gradient(135deg, hsl(${h} 65% 42%), hsl(${h2} 70% 30%))`;
+  const g = 16 + hash(track.id) % 12; // тёмно-серые оттенки 16-27%
+  return ;
 }
 
 const NOTE_SVG = '<svg viewBox="0 0 24 24" fill="none"><path d="M9 18.5V6.8l9-2.3v11" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.6" cy="18.5" r="2.4" fill="#fff"/><circle cx="15.6" cy="15.5" r="2.4" fill="#fff"/></svg>';
@@ -114,6 +111,11 @@ function thumbHTML(track, cls) {
 
 function trackUrl(t) {
   if (t.url) return t.url;
+  // облачные треки — через наш сервер (same-origin: iOS/CSP-совместимо)
+  if (t.cloud && t.file) {
+    t.url = API_URL + '/api/stream?file=' + encodeURIComponent(t.file);
+    return t.url;
+  }
   if (isNative && t.path) {
     let u = window.Capacitor.convertFileSrc(t.path);
     u = encodeURI(u).replace(/%253A/g, '%3A');
