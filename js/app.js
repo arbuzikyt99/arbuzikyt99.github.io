@@ -61,8 +61,8 @@ function toast(msg) {
 
 /* deterministic pretty gradient per track */
 function gradFor(track) {
-  const g = 16 + hash(track.id) % 12; // тёмно-серые оттенки 16-27%
-  return ;
+  const g = 12 + hash(track.id) % 10; // тёмные нейтральные оттенки
+  return 'linear-gradient(135deg, hsl(0 0% ' + (g + 8) + '%), hsl(0 0% ' + g + '%))';
 }
 
 const NOTE_SVG = '<svg viewBox="0 0 24 24" fill="none"><path d="M9 18.5V6.8l9-2.3v11" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.6" cy="18.5" r="2.4" fill="#fff"/><circle cx="15.6" cy="15.5" r="2.4" fill="#fff"/></svg>';

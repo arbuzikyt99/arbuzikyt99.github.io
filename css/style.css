@@ -889,3 +889,73 @@ a[href*="zcode"], a[href*="z.ai"], [class*="zcode"], [id*="zcode"], [class*="bad
 #btn-version .upd-dot { background: #fff !important; box-shadow: 0 0 8px rgba(255, 255, 255, .6) !important; }
 .prem-how { background: rgba(255, 255, 255, .05) !important; border-color: rgba(255, 255, 255, .12) !important; }
 .hb-btn.active { text-shadow: none !important; }
+
+/* ============================================================
+   PURE BLACK GLASS — чёрный фон, тёмное стекло (финальный слой)
+   ============================================================ */
+body { background: #000 !important; }
+:root { --grad: linear-gradient(135deg, #2c2c2e, #1a1a1c) !important; }
+.bgfx {
+  background:
+    radial-gradient(60% 50% at 50% -10%, rgba(255, 255, 255, .05), transparent 70%),
+    #000 !important;
+  animation: none !important;
+  filter: none !important;
+}
+.logo {
+  background: rgba(255, 255, 255, .1) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16) !important;
+}
+.card-mix {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .05)) !important;
+  border: 1px solid rgba(255, 255, 255, .16) !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .5) !important;
+}
+#hb-pill {
+  background: rgba(255, 255, 255, .14) !important;
+  border: 1px solid rgba(255, 255, 255, .22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25) !important;
+}
+.play-btn {
+  background: #fff !important;
+  color: #000 !important;
+  box-shadow: 0 10px 40px rgba(255, 255, 255, .18) !important;
+}
+.btn-grad {
+  background: rgba(255, 255, 255, .12) !important;
+  border: 1px solid rgba(255, 255, 255, .18) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+.profile-avatar {
+  background: rgba(255, 255, 255, .12) !important;
+  box-shadow: none !important;
+}
+.prem-crown { background: rgba(255, 255, 255, .12) !important; box-shadow: none !important; }
+.tabs .tab.active { background: rgba(255, 255, 255, .14) !important; box-shadow: none !important; }
+.eq-chip.active {
+  background: rgba(255, 255, 255, .14) !important;
+  border-color: rgba(255, 255, 255, .22) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+.badge.premium, .badge.admin, .badge.pending {
+  background: rgba(255, 255, 255, .1) !important;
+  border-color: rgba(255, 255, 255, .2) !important;
+  color: #fff !important;
+}
+.stat-card.plays b, .prem-price {
+  color: #fff !important;
+  background: none !important;
+  -webkit-text-fill-color: #fff !important;
+}
+.row.playing .rtitle { color: #fff !important; background: none !important; }
+.mini-prog i, .seek-fill, .ver-progress i { background: rgba(255, 255, 255, .9) !important; }
+.rheart.fav, #btn-fav.fav { color: #fff !important; }
+.rheart.fav svg path, #btn-fav.fav svg path { fill: #fff !important; }
+.eq-band input[type=range] { accent-color: #fff !important; }
+#btn-studio svg, .profile-action.premium svg { color: #fff !important; }
+.prem-list svg { color: #fff !important; }
+#btn-version .upd-dot { background: #fff !important; box-shadow: 0 0 10px rgba(255, 255, 255, .7) !important; }
+.prem-how { background: rgba(255, 255, 255, .06) !important; border-color: rgba(255, 255, 255, .14) !important; }
+.row .thumb { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .09); }
